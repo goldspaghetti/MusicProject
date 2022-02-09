@@ -9,13 +9,13 @@ import os, json
 
 class Albumn:
     #music albumn
-    def __init__(self, baseDir, musicFiles, musicController):
+    def __init__(self, baseDir, musicFiles, musicController, musicSelector):
         self.musicController = musicController
         self.mainFrame = None
         self.baseDir = baseDir
         self.singleMusics = []
         for singleMusic in musicFiles:
-            self.singleMusics.append(SingleMusic(os.path.join(baseDir, singleMusic)))
+            self.singleMusics.append(SingleMusic(os.path.join(baseDir, singleMusic), musicSelector))
 
     def initUI(self, parent, column, row):
         self.mainFrame = ttk.Frame(parent, style="TFrame")
@@ -86,6 +86,7 @@ class MusicSelector():
         #baseDir = "/Users/gold_spaghetti/Documents/music/system96"
         #baseDir = "/Users/gold_spaghetti/Documents/UnityShite/PEPSIMAN/Assets/Sound/"
         #baseDir = "/Users/gold_spaghetti/Documents/UnityShite/RhythmShite/Assets/audio"
+        self.getCurrJson()
         for root, subfolders, filenames in os.walk(baseDir):
             musicFiles = []
             for subfolder in subfolders:
@@ -95,8 +96,11 @@ class MusicSelector():
                     musicFiles.append(filename)
                 print("file inside: " + root + " : " + filename)
             if len(musicFiles) > 0:
-                currAlbumn = Albumn(root, musicFiles, self.musicController)
+                currAlbumn = Albumn(root, musicFiles, self.musicController, self)
                 self.albumns.append(currAlbumn)
+        self.saveAudioFile()
+        self.jsonData = None
+        
 
     #SHOULD THIS BE UNDER HERE?
     def getCurrJson(self):
@@ -104,12 +108,15 @@ class MusicSelector():
         self.jsonData = json.load(currFile)
         currFile.close()
 
-    def saveAudiofile(self):
+    def saveAudioFile(self):
         #DO THIS AT END OR JUST ADD A BUTTON I GUESS
+        currFile = open("./MusicAudioData.json", "w")
+        json.dump(self.jsonData, currFile)
+        currFile.close()
         pass
 
-    def updateJson(self, newDic):
-        self.jsonData[newDic[0]] = newDic[1]
+    def addToJson(self, filename, newDic):
+        self.jsonData[filename] = newDic
 
 
     def updateAllJson(self):

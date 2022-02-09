@@ -74,12 +74,15 @@ class AudioVisualizer():
             return 0
         else:
             currSample = math.ceil(currTime / currSong.sampleDurationSec)
+            #currSample = math.ceil(currTime / currSong.sampleDurationSec) // currSong.hop_length
+
             sampleValues = []
             #print(currSample)
             if (currSample >= currSong.audioVisArray.shape[1]):
                 print("OVER TIME")
                 return -1
 
+            #MAYBE * sample by hop_length
             #FOR REGULAR VIS
             #for i in range(currSong.audioVisArray.shape[0]):
             #    sampleValues.append(currSong.audioVisArray[i, currSample] + 80)
