@@ -16,6 +16,7 @@ class SingleMusic:
         self.musicSelector = musicSelector
         self.jsonDic = musicSelector.jsonData
 
+        self.musicName = os.path.basename(filename)
         self.filename = filename
         self.extension = os.path.splitext(filename)[1]
         self.originalAudioSegment = AudioSegment.from_file(filename, extension=self.extension[1:])
@@ -34,8 +35,8 @@ class SingleMusic:
         self.sampleDurationSec = 0
         self.audioVisArray = []
         self.chromaData = []
-        self.initAudioVisData(filename)
-        #self.loadAudioData()
+        #self.initAudioVisData(filename)
+        self.loadAudioData()
 
         self.mainFrame = None
 
@@ -79,23 +80,30 @@ class SingleMusic:
 
         self.sampleDurationSec = (self.songDur/M_db.shape[1])
         """
-        #hop Length test
+        #hop Length test along with only chroma
         n_fft= 2048
         hop_length = n_fft//4
         self.hop_length = hop_length
         y, sr = librosa.load(filename, sr=44100)
-        #hop_length = n_fft//4
-        #hop_length = 100
-        #self.hop_length = hop_length
         
-        M = librosa.feature.melspectrogram(y=y, sr=sr, hop_length=hop_length)
-        M_db = librosa.power_to_db(M, ref=np.max)
-        reshapedMdb = M_db.reshape(32, 4, M_db.shape[1])
-        self.audioVisArray = np.mean(reshapedMdb, axis=1)
-        
-        self.songDur = librosa.get_duration(y, sr=sr, n_fft=n_fft, hop_length=hop_length)
 
-        self.sampleDurationSec = (self.songDur/M_db.shape[1])
+        #M = librosa.feature.melspectrogram(y=y, sr=sr, hop_length=hop_length)
+        #M_db = librosa.power_to_db(M, ref=np.max)
+        #reshapedMdb = M_db.reshape(32, 4, M_db.shape[1])
+        #self.audioVisArray = np.mean(reshapedMdb, axis=1)
+        self.chromaData = librosa.feature.chroma_stft(y, sr=sr, hop_length=hop_length)
+        #reduce accuracy, why not
+        newChromaData = np.empty(self.chromaData.shape, dtype=np.int8)
+        for i in range(self.chromaData.shape[0]):
+            for j in range(self.chromaData.shape[1]):
+                newChromaData[i][j] = round(self.chromaData[i][j]* 100, 0)
+
+        self.chromaData = newChromaData
+
+        self.songDur = librosa.get_duration(y, sr=sr, n_fft=n_fft, hop_length=hop_length)
+        
+        
+        self.sampleDurationSec = (self.songDur/self.chromaData.shape[1])
 
 
 
@@ -105,7 +113,7 @@ class SingleMusic:
         #yHarmonic, yPercussive = librosa.effects.hpss(y)
         #difference between cqt and stft chroma?
         #self.chromaData = librosa.feature.chroma_cqt(y, sr=sr)
-        self.chromaData = librosa.feature.chroma_stft(y, sr=sr)
+        #self.chromaData = librosa.feature.chroma_stft(y, sr=sr)
 
         #testing if length is the same
         """
@@ -124,7 +132,7 @@ class SingleMusic:
         currMusicDic = {}
         currMusicDic["songDur"] = self.songDur
         currMusicDic["sampleDurationSec"] = self.sampleDurationSec
-        currMusicDic["audioVisArray"] = self.audioVisArray.tolist()
+        #currMusicDic["audioVisArray"] = self.audioVisArray.tolist()
         currMusicDic["chromaData"] = self.chromaData.tolist()
         self.musicSelector.addToJson(self.filename, currMusicDic)
 
@@ -135,8 +143,8 @@ class SingleMusic:
             currMusicDic = self.jsonDic[self.filename]
             self.songDur = currMusicDic["songDur"]
             self.sampleDurationSec = currMusicDic["sampleDurationSec"]
-            self.audioVisArray = np.asarray(currMusicDic["audioVisArray"])
-            self.chromaData = np.asarray(currMusicDic["chromaData"])
+            #self.audioVisArray = np.asarray(currMusicDic["audioVisArray"])
+            self.chromaData = np.asarray(currMusicDic["chromaData"], dtype=np.int8)
             print("chroma type: " + str(type(self.chromaData)))
             #print(audioVis)
         else:

@@ -78,7 +78,7 @@ class AudioVisualizer():
 
             sampleValues = []
             #print(currSample)
-            if (currSample >= currSong.audioVisArray.shape[1]):
+            if (currSample >= currSong.chromaData.shape[1]):
                 print("OVER TIME")
                 return -1
 
@@ -89,7 +89,7 @@ class AudioVisualizer():
             
             #CHROMA VIS
             for i in range(currSong.chromaData.shape[0]):
-                sampleValues.append(currSong.chromaData[i, currSample] * 80)
+                sampleValues.append(currSong.chromaData[i, currSample] * 80/100)
             
             for i in range(self.rectNum):
                 currRectangle = self.rectangles[i]

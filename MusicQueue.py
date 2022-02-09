@@ -13,12 +13,13 @@ class MusicQueue:
     
     def addMusicsToQueue(self, singleMusics, musicController):
         for singleMusic in singleMusics:
-            currSingleMusicEntry = SingleMusicEntry(playlistNum=len(self.singleMusicEntries), name=singleMusic.filename, artist="resign", duration=singleMusic.songDur, musicController=musicController)
+            currSingleMusicEntry = SingleMusicEntry(playlistNum=len(self.singleMusicEntries), name=singleMusic.musicName, artist="resign", duration=singleMusic.songDur, musicController=musicController)
             currSingleMusicEntry.initUI(self.mainFrame, column=0, row=len(self.singleMusicEntries))
             self.singleMusicEntries.append(currSingleMusicEntry)
 
     def initUI(self, parent):
        self.mainFrame = parent
+       self.mainFrame.columnconfigure(0, weight=1)
 
     def updateCurrPlaylistQueue(self, playlistNum):
         pass
@@ -38,17 +39,30 @@ class SingleMusicEntry:
         self.musicController = musicController
 
     def initUI(self, parent, column, row):
-        self.mainFrame = ttk.Frame(parent, style="MusicSelectionFrame.TFrame")
+        self.mainFrame = ttk.Frame(parent)
         self.skipToPlaylistButton = ttk.Button(self.mainFrame, command=lambda:self.musicController.skipToPlaylistPos(newPos=self.playlistNum), text="skip to")
         self.nameLabel = ttk.Label(self.mainFrame, text=self.name)
         self.artistLabel = ttk.Label(self.mainFrame, text=self.artist)
         self.durationLabel = ttk.Label(self.mainFrame, text=self.duration)
+
+        if (self.playlistNum %2 == 0):
+            self.nameLabel.configure(style="CurrentPlaylistLabelEven.TLabel")
+            self.artistLabel.configure(style="CurrentPlaylistLabelEven.TLabel")
+            self.durationLabel.configure(style="CurrentPlaylistLabelEven.TLabel")
+            
+        else:
+            self.nameLabel.configure(style="CurrentPlaylistLabelOdd.TLabel")
+            self.artistLabel.configure(style="CurrentPlaylistLabelOdd.TLabel")
+            self.durationLabel.configure(style="CurrentPlaylistLabelOdd.TLabel")
 
         self.skipToPlaylistButton.grid(column=0, row=0, rowspan=2, sticky=(N, W, E, S))
         self.nameLabel.grid(column=1, row=0, columnspan=2, sticky=(N, W, E, S))
         self.artistLabel.grid(column=1, row=1, sticky=(N, W, E, S))
         self.durationLabel.grid(column=2, row=1, sticky=(N, W, E, S))
 
+        #self.mainFrame.columnconfigure(0, weight=1)
+        self.mainFrame.columnconfigure(1, weight=1)
+        self.mainFrame.columnconfigure(2, weight=1)
         self.mainFrame.grid(column=column, row=row, sticky=(N, W, E, S))
 
     def destory(self):

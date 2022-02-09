@@ -1,6 +1,8 @@
 from tkinter import *
 from tkinter import ttk
 
+from sklearn.cluster import k_means
+
 from MusicController import MusicController
 from SingleMusic import SingleMusic
 from AudioVisualizer import AudioVisualizer
@@ -13,13 +15,14 @@ class Albumn:
         self.musicController = musicController
         self.mainFrame = None
         self.baseDir = baseDir
+        self.albumnName = os.path.basename(baseDir)
         self.singleMusics = []
         for singleMusic in musicFiles:
             self.singleMusics.append(SingleMusic(os.path.join(baseDir, singleMusic), musicSelector))
 
     def initUI(self, parent, column, row):
         self.mainFrame = ttk.Frame(parent, style="TFrame")
-        titleLabel = ttk.Label(self.mainFrame, text=self.baseDir)
+        titleLabel = ttk.Label(self.mainFrame, text=self.albumnName)
         songNumLabel = ttk.Label(self.mainFrame, text="songNum")
         artistLabel = ttk.Label(self.mainFrame, text="artist")
         addToPlaylistButton = ttk.Button(self.mainFrame, text="addToPlaylist", command=lambda:self.musicController.addToPlaylist(self.singleMusics))
@@ -68,6 +71,7 @@ class MusicSelector():
     def onConfigure(self, canvas):
         #print("wot")
         canvas.configure(scrollregion=canvas.bbox("all"))
+        #update musicqueue I guess
 
     def resizeInsideCanvas(self, event, canvas):
         print("wot")
@@ -135,6 +139,7 @@ class MusicSelector():
 
         #self.currPlaylistFrame = ttk.LabelFrame(self.currPlaylistCanvas, borderwidth=5, relief="sunken", text="Current Playlist", style="TLabelframe")
         #self.songSelectFrame = ttk.LabelFrame(self.songSelectCanvas, borderwidth=5, relief="sunken", text="Albumns", style="TLabelframe")
+        
         self.currPlaylistFrame = ttk.Frame(self.currPlaylistCanvas, style="TFrame")
         self.songSelectFrame = ttk.Frame(self.songSelectCanvas, style="TFrame")
 
@@ -248,6 +253,16 @@ def main():
                     "borderwidth":2
                 }
             },
+            "CurrentPlaylistFrameEven.TFrame":{
+                "configure":{
+                    "background":"#c43061"
+                }
+            },
+            "CurrentPlaylistFrameOdd.TFrame":{
+                "configure":{
+                    "background":"#9cf087"
+                }
+            },
             "BackgroundFrame.TFrame":{
                 "configure":{
                     "background":"#002635"
@@ -266,6 +281,16 @@ def main():
                 "configure":{
                     "background":"#002635",
                     "foreground":"#00cccc"
+                }
+            },
+            "CurrentPlaylistLabelEven.TLabel":{
+                "configure":{
+                    "background":"#00384d"
+                }
+            },
+            "CurrentPlaylistLabelOdd.TLabel":{
+                "configure":{
+                    "background":"#517f8d"
                 }
             },
             "Vertical.TScrollbar":{

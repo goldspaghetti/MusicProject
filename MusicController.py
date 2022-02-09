@@ -25,7 +25,7 @@ class MusicController:
         self.musicPaused = True
         self.reset = False
         self.updateMusicPositionExists = False
-        self.volume = -12
+        self.volume = -24
 
         self.musicVolumeBar = MusicVolumeBar(self)
         self.musicBar = MusicProgressBar(self)
@@ -236,7 +236,7 @@ class MusicVolumeBar:
         self.volumeCanvas = None
         self.volumeRectangle = None
         self.lowestDb = -36
-        self.currDb = -12
+        self.currDb = -24
         self.musicController = musicController
 
     def initUI(self, parent, column, row, columnspan, rowspan):
