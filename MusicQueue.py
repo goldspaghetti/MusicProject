@@ -39,12 +39,17 @@ class SingleMusicEntry:
         self.musicController = musicController
 
     def initUI(self, parent, column, row):
-        self.mainFrame = ttk.Frame(parent)
+        self.mainFrame = ttk.Frame(parent, takefocus=1)
         self.skipToPlaylistButton = ttk.Button(self.mainFrame, command=lambda:self.musicController.skipToPlaylistPos(newPos=self.playlistNum), text="skip to")
+        self.mainFrame.bind("<Button-1>", lambda event: self.musicController.skipToPlaylistPos(newPos=self.playlistNum))
         self.nameLabel = ttk.Label(self.mainFrame, text=self.name)
+        self.nameLabel.bind("<Button-1>",lambda event: self.musicController.skipToPlaylistPos(newPos=self.playlistNum))
         self.artistLabel = ttk.Label(self.mainFrame, text=self.artist)
         self.durationLabel = ttk.Label(self.mainFrame, text=self.duration)
+        self.artistLabel.bind("<Button-1>", lambda event: self.musicController.skipToPlaylistPos(newPos=self.playlistNum))
+        self.durationLabel.bind("<Button-1>", lambda event: self.musicController.skipToPlaylistPos(newPos=self.playlistNum))
 
+        """
         if (self.playlistNum %2 == 0):
             self.nameLabel.configure(style="CurrentPlaylistLabelEven.TLabel")
             self.artistLabel.configure(style="CurrentPlaylistLabelEven.TLabel")
@@ -54,6 +59,8 @@ class SingleMusicEntry:
             self.nameLabel.configure(style="CurrentPlaylistLabelOdd.TLabel")
             self.artistLabel.configure(style="CurrentPlaylistLabelOdd.TLabel")
             self.durationLabel.configure(style="CurrentPlaylistLabelOdd.TLabel")
+        """
+        
 
         self.skipToPlaylistButton.grid(column=0, row=0, rowspan=2, sticky=(N, W, E, S))
         self.nameLabel.grid(column=1, row=0, columnspan=2, sticky=(N, W, E, S))

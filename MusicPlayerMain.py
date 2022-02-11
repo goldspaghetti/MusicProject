@@ -43,6 +43,8 @@ class Albumn:
 class App():
     def __init__(self):
         self.mainFrame = None
+        self.commandLine = None
+        self.commandTextVariable = StringVar()
 
     def initUI(self, root):
         self.mainFrame = ttk.Frame(root)
@@ -50,7 +52,36 @@ class App():
         self.mainFrame.columnconfigure(1, weight=1)
         self.mainFrame.rowconfigure(0, weight=1)
         self.mainFrame.rowconfigure(1, weight=1)
+        
+        self.commandLine = ttk.Entry(root, exportselection=0, textvariable=self.commandTextVariable)
+        self.commandLine.bind("<KeyPress-Return>", lambda event: self.executeCommand(self.commandTextVariable.get()))
+        #registerCommand = self.commandLine.register(self.executeCommand)
         self.mainFrame.grid(column=0, row=0, sticky=(N, W, E, S))
+        self.commandLine.grid(column=0, row=1, sticky=(N, S, E, W))
+
+    def executeCommand(self, commandStr):
+        print("exec command")
+        command = commandStr[0]
+        if command=="g":
+            if (len(commandStr) != 5):
+                return -1
+            firstColumnPos = int(commandStr[1])
+            firstRowPos = int(commandStr[2])
+            secondColumnPos = int(commandStr[3])
+            secondRowPos = int(commandStr[4])
+            self.regrid(column1=firstColumnPos, row1=firstRowPos, column2=secondColumnPos, row2=secondRowPos)
+
+        if command=="c":
+            #row/column configure
+            pass
+        elif command=="v":
+            #visualizer
+            pass
+    def regrid(self, column1, row1, column2, row2):
+        selectedWidget = self.mainFrame.grid_slaves(column=column1, row=row1)
+        
+        print(selectedWidget)
+
 
 class MusicSelector():
     def __init__(self, musicController):
@@ -189,6 +220,9 @@ class MusicSelector():
         self.frameContainer.grid(column=0, rowspan=2, sticky=(N, W, E, S))
         """
 
+def regridTest(frame):
+    frame.grid(column=1, row=0, columnspan=4, sticky=(N, W, S, E))
+
 def main():
     root = Tk()
     
@@ -198,8 +232,10 @@ def main():
     #s.configure("TLabelFrame", bg="#212121", highlightcolor="#002635", highlightbackground="#212121", highlightthickness=5,foreground="#34b0d2")
     #s.configure('TButton', foreground='#34b0d2')
 
+
     root.columnconfigure(0, weight=1)
     root.rowconfigure(0, weight=1)
+    #root.columnconfigure(1, weight=1)
     app = App()
     app.initUI(root)
     audioVisualizer = AudioVisualizer()
@@ -211,6 +247,11 @@ def main():
     musicQueue.initUI(musicSelector.currPlaylistFrame)
     audioVisualizer.initUI(app.mainFrame, column=1, row=0)
     musicController.initUI(app.mainFrame, column=1, row=1)
+    
+    """testFrame = ttk.Frame(root)
+    testFrame.grid(column=0, row=2, sticky=(N, S, E, W))
+    regridTestButton = ttk.Button(root, command=lambda:regridTest(testFrame))
+    regridTestButton.grid(column=0, row=1, rowspan=1, sticky=(N, W, E, S))"""
     #app.initUI(root)
 
     s=ttk.Style()

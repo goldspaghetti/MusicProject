@@ -18,6 +18,7 @@ class AudioVisualizer():
         self.widthIntervals = 0
         self.heightIntervals = 0
         self.canvas = None
+        
 
         #FOR CHROMA TEST:
         self.rectNum = 12
@@ -158,6 +159,8 @@ class AudioVisualizer():
         self.canvas.bind("<Configure>", lambda event: self.resizeCanvas(event))
         self.canvas.grid(column=0, row=0, sticky=(N, W, E, S), padx=1, pady=1)
         self.mainFrame.grid(column=column, row=row, sticky=(N, W, E, S))
+
+
 
 def main():
     root = Tk()
